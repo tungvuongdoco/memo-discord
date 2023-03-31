@@ -1,28 +1,33 @@
 const dotenv = require('dotenv');
 require('dotenv').config();
-const { Client, Intents } = require('discord.js');
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES] });
-const TextToSpeech = require('@google-cloud/text-to-speech');
-
-const prefix = process.env.PREFIX; // Tiền tố cho các lệnh của bot
+const { Client } = require('discord.js');
+const client = new Client({
+  partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+  intents: [
+    'GUILDS',
+    'GUILD_MESSAGES',
+    'DIRECT_MESSAGES',
+    'GUILD_VOICE_STATES',
+    'GUILD_MESSAGE_REACTIONS',
+  ],
+});
+const prefix = 'm';
 const token = process.env.TOKEN;
 
-import express from 'express';
-import liveGI from './content/LiveGenshin';
-import DailyGenshin from './content/DailyGenshin';
-import DiscordGuideList from './content/DiscordGuideList';
-import TextToSpeechHandler from './content/TextToSpeech';
+const express = require('express');
+const liveGI = require('./content/LiveGenshin');
+const DiscordGuideList = require('./content/DiscordGuideList');
+const TextToSpeechHandler = require('./content/TextToSpeech');
 
 client.on('messageCreate', async (message) => {
   if (message.content.startsWith(prefix)) {
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
-
-    if (command === 'help' || command === 'h' ) { // Đăng ký lệnh 'help'
+    if (command === 'help' || command === 'h') {
       const helpMessage = 'Đây là danh sách các hướng dẫn:\n';
       message.channel.send(helpMessage);
-      message.channel.send(<DiscordGuideList />); // Gửi phản hồi với danh sách hướng dẫn
-    }  else if (command === 'n' || command === 'noi') {
+      message.channel.send(DiscordGuideList()); // Gọi hàm DiscordGuideList
+    } else if (command === 'n' || command === 'noi') {
       if (args.length === 0) {
         message.channel.send('Bạn chưa nhập nội dung!');
       } else {
@@ -30,9 +35,13 @@ client.on('messageCreate', async (message) => {
         const handler = new TextToSpeechHandler(message, text);
         await handler.speak();
       }
-    } else if (command === 'cn' || command === 'changename') { // đăng ký lệnh
+    } else if (command === 'cn' || command === 'changename') {
       const text = args.join(' ');
-      const newNickname = text; // Đặt biệt danh mới tại đây
+      const newNickname = text;
+      if (!message.guild.me.permissions.has('CHANGE_NICKNAME')) {
+        message.reply('Bot không có quyền đổi biệt danh.');
+        return;
+      }
       message.member.setNickname(newNickname)
           .then(() => {
             message.reply(`Đã đổi biệt danh thành ${newNickname}`);
@@ -42,21 +51,27 @@ client.on('messageCreate', async (message) => {
             message.reply('Đổi biệt danh thất bại');
           });
     } else if (command === 'avatar' || command === 'a') {
-      const user = message.mentions.users.first(); // Lấy người dùng được tag
+      const mentionedUser = message.mentions.users.first();
+      const user = mentionedUser || message.author;
       if (user) {
-        const avatarURL = user.avatarURL({ format: 'png', dynamic: true, size: 4096 }); // Lấy link đến hình đại diện (avatar) của người dùng đó
+        const avatarURL = user.avatarURL({ format: 'png', dynamic: true, size: 4096 });
         if (avatarURL) {
-          message.channel.send(`${user.username}'s avatar: ${avatarURL}`);
+          message.channel.send(`**${user.username}'s avatar:**`);
+          message.channel.send({ files: [avatarURL] });
         } else {
           message.channel.send(`${user.username} doesn't have an avatar!`);
         }
       } else {
-        message.channel.send('You need to tag a user to check their avatar!');
+        const avatarURL = message.author.avatarURL({ format: 'png', dynamic: true, size: 4096 });
+        if (avatarURL) {
+          message.channel.send(`**${user.username}'s avatar:**`);
+          message.channel.send({ files: [avatarURL] });
+        } else {
+          message.channel.send('You need to tag a user to check their avatar!');
+        }
       }
-    } else if (command === 'daily' || command === 'd') {
-      await DailyGenshin.execute(message, args);
     }  else if (command === 'livegi' || command === 'livegenshin') {
-      liveGI(message, args);
+      liveGI.execute(message);
     }
   }
 });

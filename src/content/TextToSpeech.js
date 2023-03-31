@@ -1,5 +1,16 @@
+const fs = require('fs');
+const { project_id, client_email, private_key } = JSON.parse(fs.readFileSync('google.json'));
+const dotenv = require('dotenv');
+require('dotenv').config();
 const { TextToSpeechClient } = require('@google-cloud/text-to-speech');
-const ttsClient = new TextToSpeechClient();
+
+const ttsClient = new TextToSpeechClient({
+  projectId: project_id,
+  credentials: {
+    client_email: client_email,
+    private_key: private_key,
+  },
+});
 
 // Tạo class TextToSpeechHandler
 class TextToSpeechHandler {
@@ -23,3 +34,5 @@ class TextToSpeechHandler {
     }
   }
 }
+
+module.exports = TextToSpeechHandler;
