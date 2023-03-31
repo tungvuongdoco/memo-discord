@@ -1,5 +1,5 @@
-const ttsClient = new TextToSpeechClient();
 const { TextToSpeechClient } = require('@google-cloud/text-to-speech');
+const ttsClient = new TextToSpeechClient();
 
 // Tạo class TextToSpeechHandler
 class TextToSpeechHandler {
