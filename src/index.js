@@ -17,7 +17,6 @@ const token = process.env.TOKEN;
 const express = require('express');
 const liveGI = require('./content/LiveGenshin');
 const DiscordGuideList = require('./content/DiscordGuideList');
-const TextToSpeechHandler = require('./content/TextToSpeech');
 
 client.on('messageCreate', async (message) => {
   if (message.content.startsWith(prefix)) {
@@ -27,14 +26,6 @@ client.on('messageCreate', async (message) => {
       const helpMessage = 'Đây là danh sách các hướng dẫn:\n';
       message.channel.send(helpMessage);
       message.channel.send(DiscordGuideList()); // Gọi hàm DiscordGuideList
-    } else if (command === 'n' || command === 'noi') {
-      if (args.length === 0) {
-        message.channel.send('Bạn chưa nhập nội dung!');
-      } else {
-        const text = args.join(' ');
-        const handler = new TextToSpeechHandler(message, text);
-        await handler.speak();
-      }
     } else if (command === 'cn' || command === 'changename') {
       const text = args.join(' ');
       const newNickname = text;
