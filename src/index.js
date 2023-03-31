@@ -13,7 +13,7 @@ import DailyGenshin from './content/DailyGenshin';
 import DiscordGuideList from './content/DiscordGuideList';
 import TextToSpeechHandler from './content/TextToSpeech';
 
-client.on('message', async (message) => {
+client.on('messageCreate', async (message) => {
   if (message.content.startsWith(prefix)) {
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
