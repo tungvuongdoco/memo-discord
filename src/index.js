@@ -38,11 +38,20 @@ schedule.scheduleJob('0 7 * * *', async () => {
   const content = async () => {
     try {
       let response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${dataUser?.city || 'Thanh Hóa'}&appid=${API_KEY}&units=metric&lang=vi`);
-      response = response.data
-      return `${dataUser.callMe ? dataUser.callMe + '! ' : ''}Hôm nay tại ${dataUser?.city || ''} có nhiệt độ ${response?.main?.temp} °C trời ${response?.weather[0]?.description}, ${dataUser?.callMe || 'bạn'} ${WEATHER[response?.weather[0]?.main]?.label || ''}`
+      response = response.data;
+
+      return [
+        { name: '- Nhiệt độ hiện tại:', value: `${response?.main?.temp } °C` },
+        { name: '- Tầm nhìn:', value: `${response?.visibility}` },
+        { name: '- Tốc độ gió:', value: `${response?.wind?.speed}` },
+        { name: '- Mây che phủ:', value: `${response?.clouds?.all >= 70 ? "Nhiều mây" : response?.clouds?.all >= 30 ? "Bình thường" : "Ít mây"}` },
+      ]
+
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu thời tiết:', error);
-      return `Lỗi Lỗi ....! Tib-chan không thể lấy được thời tiết hôm của ${dataUser ? dataUser.callMe + '! ' : 'bạn'} :((`
+      return {
+        name: 'Lỗi Lỗi ....! ', value: `Tib-chan không thể lấy được thời tiết hôm của ${dataUser ? dataUser.callMe + '! ' : 'bạn'} :((`
+      }
     }
   };
 
@@ -50,7 +59,15 @@ schedule.scheduleJob('0 7 * * *', async () => {
 
   if (channel) {
       const dataBody = await content();
-      channel.send(dataBody);
+
+      const exampleEmbed = {
+        color: 0x0099ff,
+        title: `Hôm nay tại ${dataUser?.city} trời ${response?.weather[0]?.description}, ${dataUser?.callMe || 'bạn'} ${WEATHER[response?.weather[0]?.main]?.label || ''}`,
+        fields: dataBody,
+        timestamp: new Date().toISOString(),
+      };
+      const tagMessage = `<@${message.author.id}>`;
+      channel.send({ content: tagMessage, embeds: [exampleEmbed] });
   } else {
       console.log("Kênh không tồn tại hoặc Tib-chan không có quyền truy cập vào kênh.");
   }

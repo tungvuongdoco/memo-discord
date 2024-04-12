@@ -13,8 +13,7 @@ async function Weather(message, dataUser) {
       let response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${dataUser.city}&appid=${API_KEY}&units=metric&lang=vi`);
       response =  response.data;
       return [
-        { name: '- Nhiệt độ hiện tại:', value: `${response?.main?.temp }` },
-        { name: '- Nhiệt độ:', value: `${response?.main?.temp_min} - ${response?.main?.temp_max}`},
+        { name: '- Nhiệt độ hiện tại:', value: `${response?.main?.temp } °C` },
         { name: '- Tầm nhìn:', value: `${response?.visibility}` },
         { name: '- Tốc độ gió:', value: `${response?.wind?.speed}` },
         { name: '- Mây che phủ:', value: `${response?.clouds?.all >= 70 ? "Nhiều mây" : response?.clouds?.all >= 30 ? "Bình thường" : "Ít mây"}` },
