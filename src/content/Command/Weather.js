@@ -5,35 +5,62 @@ import { WEATHER } from '../../constants/CONSTANTS';
 const dotenv = require('dotenv');
 require('dotenv').config();
 
-async function Weather(message, dataUser) {
-  const API_KEY = process.env.API_KEY_WEATHER; // Thay YOUR_API_KEY bằng khóa API của bạn từ OpenWeatherMap
+async function Weather(message, dataUser, args) {
+  const API_KEY = process.env.API_KEY_WEATHER; // https://developer.accuweather.com/
+
+  const text = args.join(' ');
+  const newWether = text;
 
   const content = async () => {
     try {
-      let response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${dataUser.city}&appid=${API_KEY}&units=metric&lang=vi`);
-      response =  response.data;
-      return [
-        { name: '- Nhiệt độ hiện tại:', value: `${response?.main?.temp } °C` },
-        { name: '- Tầm nhìn:', value: `${response?.visibility}` },
-        { name: '- Tốc độ gió:', value: `${response?.wind?.speed}` },
-        { name: '- Mây che phủ:', value: `${response?.clouds?.all >= 70 ? "Nhiều mây" : response?.clouds?.all >= 30 ? "Bình thường" : "Ít mây"}` },
-      ]
+      let id_city = dataUser.id_city
+      if(newWether){
+        const q = newWether.replace(/ /g, '-').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        let responseCity = await axios.get(`https://dataservice.accuweather.com/locations/v1/cities/search?apikey=${API_KEY}&q=${q}`);
+        responseCity = responseCity.data
+        console.log(responseCity[0], "responseCity[0]");
+        if(responseCity && responseCity[0]){
+          id_city = responseCity[0].Key
+        }
+      }
+      console.log(id_city, "id_city");
+      let response = await axios.get(`http://dataservice.accuweather.com/currentconditions/v1/${id_city}?apikey=${API_KEY}&language=vi`);
+      response =  response.data[0] || {};
+      return {
+        data: response,
+        weather: [
+          { name: '- Nhiệt độ hiện tại:', value: `${response?.Temperature?.Metric?.Value } °C` },
+          { name: '- Có mưa không:', value: `${response?.HasPrecipitation ? "Có" : "Không"}` },
+          { name: '- Thời gian:', value: `${response?.IsDayTime ? "Thời tiết ban ngày": "Thời tiết ban đêm"}` },
+        ]
+      }
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu thời tiết:', error);
       return {
-        name: 'Lỗi ', value: `Tib-chan không thể lấy được thời tiết hôm của ${dataUser ? dataUser.callMe + '! ' : 'bạn'} :((`
+        data: null,
+        weather: [
+          {
+            name: 'Lỗi Lỗi ....! ', value: `Tib-chan không thể lấy được thời tiết hôm của ${dataUser ? dataUser.call_me + '! ' : 'bạn'} :((`
+          }
+        ]
       }
     }
   }
   
   const dataBody = await content()
 
-  const exampleEmbed = {
+  let exampleEmbed = {
     color: 0x0099ff,
-    title: `Thời tiết hôm nay tại ${dataUser?.city}`,
-    fields: dataBody,
+    title: `Hôm nay tại ${newWether || dataUser?.city} trời ${dataBody?.data?.WeatherText}, ${dataUser?.call_me || 'bạn'} ${WEATHER[dataBody?.data?.WeatherText]?.label || ''}`,
+    fields: dataBody.weather,
     timestamp: new Date().toISOString(),
   };
+
+  if(!dataUser?.city && !newWether){
+    delete exampleEmbed.fields;
+    exampleEmbed.title = `${dataUser ? dataUser.call_me + ' ' : 'Bạn'} chưa cho Tib-chan biết địa chỉ :((`
+  }
+
   const tagMessage = `<@${message.author.id}>`;
   message.channel.send({ content: tagMessage, embeds: [exampleEmbed] });
 }

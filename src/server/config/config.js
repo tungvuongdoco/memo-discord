@@ -1,23 +1,15 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://tungvuongdora:Trungiu.96@tib-chan.xyphfj8.mongodb.net/?retryWrites=true&w=majority&appName=Tib-chan";
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-async function run() {
+import mongoose from 'mongoose';
+
+const mongoURI = "mongodb+srv://tungvuongdora:Trungiu.96@tib-chan.gwwdmte.mongodb.net/?retryWrites=true&w=majority&appName=Tib-chan";
+
+const config = async () => {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    await mongoose.connect(mongoURI);
+    console.log("Tib-chan đã sẵn sàng truy cập vào cơ sở dữ liệu !!");
+  } catch (error) {
+    console.error("Tib-chan chưa truy cập vào cơ sở dữ liệu:", error.message);
+    process.exit(1);
   }
 }
-run().catch(console.dir);
+
+export default config;

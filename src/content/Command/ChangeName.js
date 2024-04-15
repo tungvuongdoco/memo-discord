@@ -9,7 +9,7 @@ function ChangeName(message, args, dataUser) {
     .then(() => {
       const exampleEmbed = {
         color: 0xFFC0CB,
-        title: `Tib-chan đã đổi biệt danh của ${dataUser?.callMe || "bạn"} thành ${newNickname}. Cần gì ${dataUser?.callMe || "bạn"} hãy cứ gọi Tib-chan nhé :))`,
+        title: `Tib-chan đã đổi biệt danh của ${dataUser?.call_me || "bạn"} thành ${newNickname}. Cần gì ${dataUser?.call_me || "bạn"} hãy cứ gọi Tib-chan nhé :))`,
         timestamp: new Date().toISOString(),
       };
       const tagMessage = `<@${message.author.id}>`;
@@ -17,7 +17,7 @@ function ChangeName(message, args, dataUser) {
     })
     .catch(error => {
       console.error(error);
-      message.reply(`Tib-chan không thể đổi được biệt danh của ${dataUser?.callMe || "bạn"}`);
+      message.reply(`Tib-chan không thể đổi được biệt danh của ${dataUser?.call_me || "bạn"}`);
     });
 }
 

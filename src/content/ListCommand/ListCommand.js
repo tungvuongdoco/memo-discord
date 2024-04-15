@@ -2,38 +2,64 @@ import HelpList from '../Command//HelpList';
 import ChangeName from '../Command/ChangeName';
 import Avatar from '../Command/Avatar';
 import Weather from '../Command/Weather';
+import CallMe from '../Command/CallMe';
+import City from '../Command/City';
+import Love from '../Command/Love';
+import { getRandomGreeting } from '../../common/random';
+import { HELLO, HELLO_LOVE } from '../../constants/CONSTANTS';
+import * as userController from '../../server/api/User/user.controller';
 
-function ListCommand(message, prefix) {
+async function ListCommand(message, prefix) {
   const args = message.content.slice(prefix.length).trim().split(/ +/);
   const command = args.shift().toLowerCase();
+
+  const dataUser = await userController.getUserQuery(message.author.id);
 
   switch (command) {
     case "help":
       case "h":
         HelpList(message);
         break;
+    case "hello":
+      case "hi":
+        let title = ''
+        if(!dataUser.love){
+          title = getRandomGreeting(HELLO).replace(/\{0\}/g, dataUser?.call_me || 'bạn')
+        } else{
+          title = getRandomGreeting(HELLO_LOVE).replace(/\{0\}/g, dataUser?.call_me || 'anh')
+        }
+        const exampleEmbed = {
+          color: 0xFFC0CB,
+          title: title,
+          timestamp: new Date().toISOString(),
+        };
+        const tagMessage = `<@${message.author.id}>`;
+        message.channel.send({ content: tagMessage, embeds: [exampleEmbed] });
+        break;
     case "changename":
       case "cn":
-        ChangeName(message, args, {});
+        ChangeName(message, args, dataUser);
         break;
     case "callme":
       case "cm":
-      const exampleEmbed = {
-        color: 0xFFC0CB,
-        title: `Tính năng này Tib-chan đang học, nên sau mới sử dụng được nhé !!`,
-        timestamp: new Date().toISOString(),
-      };
-      const tagMessage = `<@${message.author.id}>`;
-      message.channel.send({ content: tagMessage, embeds: [exampleEmbed] });
+        CallMe(message, args, dataUser)
+      break;
+    case "city":
+      case "ct":
+        City(message, args, dataUser)
       break;
     case "avatar":
       case "a":
-        Avatar(message, {});
+        Avatar(message, dataUser);
         break;
-    case "weather":
-      case "we":
-        Weather(message, {city: "Thanh Hóa"});
+    case "love":
+      case "l":
+        Love(message, args, dataUser)
         break;
+    // case "weather":
+    //   case "we":
+    //     Weather(message, dataUser || {city: 'Thanh Hóa'}, args);
+    //     break;
   }
 }
 
