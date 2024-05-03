@@ -31,8 +31,6 @@ export async function getAllUser() {
   }
 };
 
-
-
 export async function update(user, data) {
   try {
     let message = ``;
@@ -43,7 +41,7 @@ export async function update(user, data) {
     } else {
       createdUser = await Model.findByIdAndUpdate(user._id, data, { new: true });
     }
-
+    console.log(data, "data");
     if(createdUser){
       if(data.call_me){
         message = `Từ giờ Tib-chan sẽ gọi bạn là ${data?.call_me} :))`
@@ -54,8 +52,10 @@ export async function update(user, data) {
       if(data.city){
         message = `Giờ Tib-chan sẽ ghi nhớ địa chỉ của ${data?.call_me || `bạn`} !!`
       }
-      if(data.love){
+      if(data.love === true){
         message = `Giờ Tib-chan sẽ mãi mãi bên ${data?.call_me || `anh`} yêu!!`
+      } else if(data.love === false){
+        message = `Giờ Tib-chan sẽ không bên ${data?.call_me || `anh`} yêu nữa!!`
       }
       if(data.role_admin){
         message = `Giờ ${data?.call_me || `bạn`} sẽ trở thành quản trị viên trong 2 giờ !!`

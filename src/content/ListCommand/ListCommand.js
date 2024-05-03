@@ -49,7 +49,7 @@ async function ListCommand(message, prefix) {
         City(message, args, dataUser)
       break;
     case "avatar":
-      case "a":
+      case "av":
         Avatar(message, dataUser);
         break;
     case "love":

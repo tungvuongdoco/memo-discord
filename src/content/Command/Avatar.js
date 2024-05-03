@@ -6,7 +6,7 @@ function Avatar(message, dataUser) {
     if (avatarURL) {
       const exampleEmbed = {
         color: 0xFFC0CB,
-        title: `**Ảnh đại diện của ${dataUser?.call_me || user.username} :**`,
+        title: `**Ảnh đại diện của ${ dataUser?.discord_id && user.id === dataUser?.discord_id ? (dataUser?.call_me || user.username) : user.username} :**`,
         description: `<@${user.id}>`,
         image: {
           url: avatarURL,
@@ -23,7 +23,7 @@ function Avatar(message, dataUser) {
     if (avatarURL) {
       const exampleEmbed = {
         color: 0xFFC0CB,
-        title: `**Ảnh đại diện của ${user.username}:**`,
+        title: `**Ảnh đại diện của ${message.author.username}:**`,
         image: {
           url: avatarURL,
         },

@@ -25,11 +25,12 @@ import ListCommand from '../src/content/ListCommand/ListCommand';
 
 client.on('messageCreate', async (message) => {
   if (message.content.startsWith(prefix)) {
+    console.log(message, "message");
     return ListCommand(message, prefix, client);
   }
 });
 
-// schedule.scheduleJob('00 07 * * *', async () => {
+// schedule.scheduleJob('06 11 * * *', async () => {
 //   const arrUser = await userController.getAllUser();
 
 //   if(arrUser.length > 0){

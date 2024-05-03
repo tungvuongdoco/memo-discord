@@ -4,7 +4,7 @@ export default async function Love(message, args, dataUser) {
   const text = args.join(' ');
   const newLove = text;
 
-  const title = await userController.update(dataUser, {discord_id: message.author.id, love: newLove === 'true' ? true : false})
+  const title = await userController.update(dataUser, {discord_id: message.author.id, love: dataUser.love === true ? false : true})
   
   const exampleEmbed = {
     color: 0xFFC0CB,

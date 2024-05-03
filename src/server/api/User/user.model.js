@@ -8,9 +8,9 @@ const schema = new Schema(
     city: { type: String }, // Nhận thông báo về thới tiết
     id_city: { type: String }, // Nhận thông báo về thới tiết
     discord_id: { type: String },
-    love: { type: Boolean, default: false, select: false }, // Bot là bạn gái
-    is_deleted: { type: Boolean, default: false, select: false },
-    role_admin: { type: Boolean, default: false, select: false }, // Check cho sử dụng quyền admin trong 2h
+    love: { type: Boolean, default: false }, // Bot là bạn gái
+    is_deleted: { type: Boolean, default: false },
+    role_admin: { type: Boolean, default: false }, // Check cho sử dụng quyền admin trong 2h
   },
   {
     timestamps: {
