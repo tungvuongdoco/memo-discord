@@ -2,6 +2,7 @@ import HelpList from '../Command//HelpList';
 import ChangeName from '../Command/ChangeName';
 import Avatar from '../Command/Avatar';
 import Weather from '../Command/Weather';
+import Music from '../Command/Music';
 import CallMe from '../Command/CallMe';
 import City from '../Command/City';
 import Love from '../Command/Love';
@@ -55,6 +56,18 @@ async function ListCommand(message, prefix) {
     case "love":
       case "l":
         Love(message, args, dataUser)
+        break;
+    case "music":
+      case "m":
+        Music(message, args, dataUser)
+        break;
+    case "remotemusic":
+      case "rm":
+        Music(message, args, dataUser)
+        break;
+    case "play":
+      case "p":
+        Music(message, args, dataUser)
         break;
     // case "weather":
     //   case "we":

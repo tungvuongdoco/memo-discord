@@ -18,7 +18,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "ytdl-core": "^4.11.5"
   },
   "scripts": {
     "start": "nodemon --exec babel-node src/index.js",
