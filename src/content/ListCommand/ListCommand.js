@@ -1,9 +1,9 @@
-import HelpList from '../Command//HelpList';
-import ChangeName from '../Command/ChangeName';
-import Avatar from '../Command/Avatar';
+import HelpList from '../Command/Help/HelpList';
+import ChangeName from '../Command/ChangeName/ChangeName';
+import Avatar from '../Command/Avatar/Avatar';
 import Weather from '../Command/Weather';
 import Music from '../Command/Music';
-import CallMe from '../Command/CallMe';
+import CallMe from '../Command/CallMe/CallMe';
 import City from '../Command/City';
 import Love from '../Command/Love';
 import { getRandomGreeting } from '../../common/random';
@@ -36,7 +36,8 @@ async function ListCommand(message, prefix) {
       const tagMessage = `<@${message.author.id}>`;
       message.channel.send({ content: tagMessage, embeds: [exampleEmbed] });
       break;
-    case "changename":
+
+    case "changename":  // 
       case "cn":
         ChangeName(message, args, dataUser);
         break;
@@ -44,34 +45,41 @@ async function ListCommand(message, prefix) {
       case "cm":
         CallMe(message, args, dataUser)
       break;
-    case "city":
-      case "ct":
-        City(message, args, dataUser)
-      break;
     case "avatar":
-      case "av":
+      case "a":
         Avatar(message, dataUser);
         break;
-    case "love":
-      case "l":
-        Love(message, args, dataUser)
-        break;
-    case "music":
-      case "m":
-        Music(message, args, dataUser)
-        break;
-    case "remotemusic":
-      case "rm":
-        Music(message, args, dataUser)
-        break;
+
+    
     case "play":
       case "p":
-        Music(message, args, dataUser)
         break;
-    // case "weather":
-    //   case "we":
-    //     Weather(message, dataUser || {city: 'Thanh Hóa'}, args);
-    //     break;
+    case "pause":
+      break;
+    case "pl":
+      break;
+    case "remote":
+      case "r":
+        break;
+
+    case "playlike":
+      break;
+    case "pll":
+      break;
+    case "remotelike":
+      case "rl":
+        break;
+    
+    case "welecom":
+      break;
+    case "bye":
+      break;
+    case "cnn":
+      break;
+    case "cll":
+      break; 
+    case "cms":
+      break; 
   }
 }
 
