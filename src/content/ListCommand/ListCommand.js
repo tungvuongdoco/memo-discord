@@ -22,21 +22,20 @@ async function ListCommand(message, prefix) {
         HelpList(message);
         break;
     case "hello":
-      case "hi":
-        let title = ''
-        if(!dataUser.love){
-          title = getRandomGreeting(HELLO).replace(/\{0\}/g, dataUser?.call_me || 'bạn')
-        } else{
-          title = getRandomGreeting(HELLO_LOVE).replace(/\{0\}/g, dataUser?.call_me || 'anh')
-        }
-        const exampleEmbed = {
-          color: 0xFFC0CB,
-          title: title,
-          timestamp: new Date().toISOString(),
-        };
-        const tagMessage = `<@${message.author.id}>`;
-        message.channel.send({ content: tagMessage, embeds: [exampleEmbed] });
-        break;
+      let title = ''
+      if(!dataUser.love){
+        title = getRandomGreeting(HELLO).replace(/\{0\}/g, dataUser?.call_me || 'bạn')
+      } else{
+        title = getRandomGreeting(HELLO_LOVE).replace(/\{0\}/g, dataUser?.call_me || 'anh')
+      }
+      const exampleEmbed = {
+        color: 0xFFC0CB,
+        title: title,
+        timestamp: new Date().toISOString(),
+      };
+      const tagMessage = `<@${message.author.id}>`;
+      message.channel.send({ content: tagMessage, embeds: [exampleEmbed] });
+      break;
     case "changename":
       case "cn":
         ChangeName(message, args, dataUser);

@@ -17,7 +17,7 @@ const client = new Client({
     'GUILD_MESSAGE_REACTIONS',
   ],
 });
-const prefix = 't';
+const prefix = 't!';
 const token = process.env.TOKEN;
 
 const express = require('express');
