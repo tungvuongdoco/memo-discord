@@ -10,7 +10,7 @@ export default async function City(message, args, dataUser) {
   const API_KEY = process.env.API_KEY_WEATHER; // https://developer.accuweather.com/
 
   const text = args.join(' ');
-  const newCity = text;
+  const newCity = text; 
 
   function capitalizeFirstLetterOfWords(str){
     return str.split(' ').map(word => {
