@@ -3,10 +3,12 @@ import mongoosePaginate from "mongoose-paginate-v2";
 
 const schema = new Schema(
   {
-    id_group: { type: String },
-    welecom: { type: String },
-    goodbye: { type: String },
-    changeName: { type: String },
+    group_id: { type: String },
+    chanel_welecom: { type: String },
+    chanel_goodbye: { type: String },
+    content_welecom: { type: String },
+    content_goodbye: { type: String },
+    cchanel_changeName: { type: String },
     is_deleted: { type: Boolean, default: false },
   },
   {

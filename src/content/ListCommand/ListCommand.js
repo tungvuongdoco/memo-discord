@@ -6,6 +6,7 @@ import Music from '../Command/Music';
 import CallMe from '../Command/CallMe/CallMe';
 import City from '../Command/City';
 import Love from '../Command/Love';
+import Bye from '../Command/Bye/index';
 import { getRandomGreeting } from '../../common/random';
 import { HELLO, HELLO_LOVE } from '../../constants/CONSTANTS';
 import * as userController from '../../server/api/User/user.controller';
@@ -73,6 +74,7 @@ async function ListCommand(message, prefix) {
     case "welecom":
       break;
     case "bye":
+      Bye(message, args, dataUser)
       break;
     case "cnn":
       break;

@@ -24,7 +24,6 @@ function HelpList(message) {
     { name: 'Chọn kênh đổi tên:', value: "`t!ccn`", inline: true },
     { name: 'Chọn kênh đổi bot gọi:', value: "`t!ccl`", inline: true },
     { name: 'Chọn kênh sử dụng nhạc:', value: "`t!cms`", inline: true },
-    { name: '- Ghi chú: ', value: "Đối với câu lệnh phần `Lệnh của kênh chát` thì muốn sử dụng tính năng này ở đâu thì sử dụng ở phòng chát ấy.!" },
   ];
 
   const exampleEmbed = {

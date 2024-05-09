@@ -6,6 +6,7 @@ const schema = new Schema(
     chanel_id: { type: String },
     url: { type: String },
     name: { type: String },
+    user_name: { type: String },
     index: { type: String }, // Số thứ tự bài hát
   },
   {

@@ -3,6 +3,7 @@ import axios from 'axios';
 import schedule from 'node-schedule';
 import { WEATHER } from './constants/CONSTANTS';
 import * as userController from '../src/server/api/User/user.controller';
+import * as settingController from '../src/server/api/Setting/setting.controller';
 
 const dotenv = require('dotenv');
 require('dotenv').config();
@@ -28,6 +29,45 @@ client.on('messageCreate', async (message) => {
     console.log(message, "message");
     return ListCommand(message, prefix, client);
   }
+});
+
+client.on('guildMemberAdd', async(member) => {
+  const setting = await settingController.getQuery(member.guild.id);
+
+  const channel = client.channels.cache.get(setting.chanel_welecom);
+    
+  if (channel) {
+      const dataBody = [
+        { name: `${setting.content_welecom}`, value: "️🎉️🎉️🎉️🎉️🎉️🎉️🎉" },
+      ]; 
+
+      const tagMessage = member.id ?`<@${member.id}>` : '';
+      const exampleEmbed = {
+        color: 0x0099ff,
+        title: `Chào mừng <@${member.id}> đến với ${"a"}`,
+        url: 'https://cdn.discordapp.com/avatars/762346326431498281/2af2d19a26d6fe38be1bf124eccca8ee.png?size=4096',
+        author: {
+          name: tagMessage,
+          icon_url: 'https://cdn.discordapp.com/avatars/762346326431498281/2af2d19a26d6fe38be1bf124eccca8ee.png?size=4096',
+          url: 'https://discord.js.org',
+        },
+        fields: dataBody,
+        timestamp: new Date().toISOString(),
+      };
+     
+      channel.send({ embeds: [exampleEmbed] });
+  } else {
+      console.log("Kênh không tồn tại hoặc Tib-chan không có quyền truy cập vào kênh.");
+  }
+  // const channel = member.guild.channels.cache.find(ch => ch.name === 'welcome'); // Thay 'welcome' bằng tên kênh bạn muốn bot gửi tin nhắn chào đón
+  // if (!channel) return;
+  // channel.send(`Chào mừng ${member} đến với máy chủ!`);
+});
+
+client.on('guildMemberRemove', member => {
+  const channel = member.guild.channels.cache.find(ch => ch.name === 'farewell'); // Thay 'farewell' bằng tên kênh bạn muốn bot gửi tin nhắn tạm biệt
+  if (!channel) return;
+  channel.send(`Tạm biệt ${member.displayName}, hy vọng bạn sẽ quay lại!`);
 });
 
 // schedule.scheduleJob('06 11 * * *', async () => {

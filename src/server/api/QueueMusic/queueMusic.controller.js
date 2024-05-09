@@ -52,3 +52,24 @@ export async function getAllQueueMusic(chanel_id) {
 		return null;
 	}
 };
+
+export async function remoteQueueMusic(chanel_id, index) {
+	try {
+		let arrMusic = await Model.deleteOne({chanel_id: chanel_id, index: index - 1});
+	
+    if(arrMusic && arrMusic.length > 0){
+      const mussic = arrMusic?.map((item, index) => {
+        return { 
+          name: `️🎶 Bài hát ${item.name}`, 
+          value: `- Bài hát được chọn bởi ${item.user_name}`
+        }
+      })
+
+		  return mussic;
+    } 
+    return null;
+	} catch (err) {
+		console.log("Tib-chan bị lỗi khi lấy dữ liệu", err);
+		return null;
+	}
+};
