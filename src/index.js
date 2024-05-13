@@ -41,7 +41,7 @@ client.on('guildMemberAdd', async(member) => {
       const avatarURL = member.user.displayAvatarURL({ format: 'png', dynamic: true, size: 4096 });
 
       const dataBody = [
-        { name: `${setting.content_welecom}`, value: "️:confetti_ball: 🎉️🎉️🎉️ :confetti_ball: " },
+        { name: `${setting.content_welecom}`, value: "️ :confetti_ball: 💐💐💐 :confetti_ball: " },
       ]; 
 
       const tagMessage = member.user.id ?`<@${member.user.id}>` : '';

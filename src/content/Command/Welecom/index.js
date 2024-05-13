@@ -1,6 +1,6 @@
 import * as settingController from '../../../server/api/Setting/setting.controller';
 
-export default async function Bye(message, args) {
+export default async function Welecom(message, args) {
   const text = args.join(' ');
   const newBye = text;
 
