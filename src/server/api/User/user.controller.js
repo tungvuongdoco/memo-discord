@@ -67,3 +67,33 @@ export async function update(user, data) {
     return null;
   }
 };
+
+export async function updateInfo(user, data) {
+  try {
+    let createdUser = null;
+
+    if(!user){
+      createdUser = await Model.create(data)
+    } else {
+      createdUser = await Model.findByIdAndUpdate(user._id, data, { new: true });
+    }
+    return createdUser;
+  } catch (err) {
+    console.log("Tib-chan bị lỗi khi lấy dữ liệu", err);
+    return null;
+  }
+};
+
+export async function deleteUse(discord_id) {
+	try {
+    const user = await Model.findOne({discord_id: discord_id}).lean();
+
+    if(user){
+      await Model.deleteOne({id: user.id});
+    }
+    return "";
+	} catch (err) {
+		console.log("Tib-chan bị lỗi khi lấy dữ liệu", err);
+		return null;
+	}
+};

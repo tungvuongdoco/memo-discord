@@ -12,6 +12,7 @@ const client = new Client({
   partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
   intents: [
     'GUILDS',
+    'GUILD_MEMBERS',
     'GUILD_MESSAGES',
     'DIRECT_MESSAGES',
     'GUILD_VOICE_STATES',
@@ -26,7 +27,6 @@ import ListCommand from '../src/content/ListCommand/ListCommand';
 
 client.on('messageCreate', async (message) => {
   if (message.content.startsWith(prefix)) {
-    console.log(message, "message");
     return ListCommand(message, prefix, client);
   }
 });
@@ -34,95 +34,174 @@ client.on('messageCreate', async (message) => {
 client.on('guildMemberAdd', async(member) => {
   const setting = await settingController.getQuery(member.guild.id);
 
-  const channel = client.channels.cache.get(setting.chanel_welecom);
-    
-  if (channel) {
+  if(setting && setting.chanel_welecom){
+    const channel = client.channels.cache.get(setting.chanel_welecom);
+
+    if (channel) {
+      const avatarURL = member.user.displayAvatarURL({ format: 'png', dynamic: true, size: 4096 });
+
       const dataBody = [
-        { name: `${setting.content_welecom}`, value: "️🎉️🎉️🎉️🎉️🎉️🎉️🎉" },
+        { name: `${setting.content_welecom}`, value: "️:confetti_ball: 🎉️🎉️🎉️ :confetti_ball: " },
       ]; 
 
-      const tagMessage = member.id ?`<@${member.id}>` : '';
+      const tagMessage = member.user.id ?`<@${member.user.id}>` : '';
       const exampleEmbed = {
         color: 0x0099ff,
-        title: `Chào mừng <@${member.id}> đến với ${"a"}`,
-        url: 'https://cdn.discordapp.com/avatars/762346326431498281/2af2d19a26d6fe38be1bf124eccca8ee.png?size=4096',
+        title: `Chào mừng ${member.user.globalName} đến với ${member.guild.name}`,
+        url: avatarURL,
         author: {
-          name: tagMessage,
-          icon_url: 'https://cdn.discordapp.com/avatars/762346326431498281/2af2d19a26d6fe38be1bf124eccca8ee.png?size=4096',
-          url: 'https://discord.js.org',
+          name: member.user.globalName,
+          icon_url: avatarURL,
+          url: avatarURL,
+        },
+        thumbnail: {
+          url: avatarURL,
+        },
+        fields: dataBody,
+        timestamp: new Date().toISOString(),
+      };
+      
+      channel.send({ content: tagMessage, embeds: [exampleEmbed] });
+    }
+  }
+});
+
+client.on('guildMemberRemove', async(member) => {
+  const setting = await settingController.getQuery(member.guild.id);
+
+  if(setting && setting.chanel_goodbye){
+    const channel = client.channels.cache.get(setting.chanel_goodbye);
+  
+  if (channel) {
+      const dataBody = [
+        { name: `${setting.content_goodbye}`, value: "️🤧🤧🤧" },
+      ]; 
+
+      await userController.deleteUse(member.user.id);
+
+      const avatarURL = member.user.displayAvatarURL({ format: 'png', dynamic: true, size: 4096 });
+      const exampleEmbed = {
+        color: 0x0099ff,
+        title: `Tạm biệt ${member.user.globalName}!!`,
+        url: avatarURL,
+        author: {
+          name: member.user.globalName,
+          icon_url: avatarURL,
+          url: avatarURL,
+        },
+        thumbnail: {
+          url: avatarURL,
         },
         fields: dataBody,
         timestamp: new Date().toISOString(),
       };
      
       channel.send({ embeds: [exampleEmbed] });
-  } else {
-      console.log("Kênh không tồn tại hoặc Tib-chan không có quyền truy cập vào kênh.");
   }
-  // const channel = member.guild.channels.cache.find(ch => ch.name === 'welcome'); // Thay 'welcome' bằng tên kênh bạn muốn bot gửi tin nhắn chào đón
-  // if (!channel) return;
-  // channel.send(`Chào mừng ${member} đến với máy chủ!`);
+  }
 });
 
-client.on('guildMemberRemove', member => {
-  const channel = member.guild.channels.cache.find(ch => ch.name === 'farewell'); // Thay 'farewell' bằng tên kênh bạn muốn bot gửi tin nhắn tạm biệt
-  if (!channel) return;
-  channel.send(`Tạm biệt ${member.displayName}, hy vọng bạn sẽ quay lại!`);
+client.on('message', async(message) => {
+  const userId = message.author.id;
+  const setting = await settingController.getQuery(message.guild.id);
+
+  if(setting){
+    if (message.channel.id === setting.chanel_info) {
+      const lines = message.content.split('\n');
+
+      const data = {};
+      lines.forEach(line => {
+        const [key, value] = line.split(': ');
+        let customKey = key;
+        if(key === 'Họ tên' || key === 'Họ Tên' || key === 'họ tên' || key === 'ho ten' || key === 'ten' || key === 'Tên'){
+          customKey = 'full_name';
+        }
+        if(key === 'Sinh nhật' || key === 'Sinh Nhật' || key === 'sinh nhật' || key === 'sinh nhat' || key === 'sinh'){
+          customKey = 'date_of_birth';
+        }
+        if(key === 'Địa chỉ' || key === 'Địa Chỉ' || key === 'địa chỉ' || key === 'dia chỉ' || key === 'city'){
+          customKey = 'city';
+        }
+        if(key === 'Game' || key === 'game'){
+          customKey = 'game';
+        }
+        if(key === 'Tính cách' || key === 'Tính Cách' || key === 'tính cách' || key === 'tinh cach'){
+          customKey = 'character';
+        }
+        if(key === 'Giới tính' || key === 'Giới Tính' || key === 'giới tính' || key === 'gioi tinh'){
+          customKey = 'gioi_tinh';
+        }
+        if(key === 'Tuổi' || key === 'tuổi' || key === 'tuoi'){
+          customKey = 'tuoi';
+        }
+        data[customKey] = value;
+      });
+
+      const user = await userController.getUserQuery(userId);
+
+      let dataUser = {}
+
+      if(data){
+        if(data.full_name){
+          dataUser['full_name'] = data.full_name;
+          delete data.full_name;
+        }
+        if(data.date_of_birth){
+          dataUser['date_of_birth'] = data.date_of_birth;
+          delete data.date_of_birth;
+        }
+        if(data.city){
+          dataUser['city'] = data.city;
+          delete data.city;
+        }
+        if(data.game){
+          dataUser['city'] = data.game;
+          delete data.game;
+        }
+        if(data.character){
+          dataUser['character'] = data.character;
+          delete data.character;
+        }
+        if(data.gioi_tinh){
+          dataUser['gioi_tinh'] = data.gioi_tinh;
+          delete data.gioi_tinh;
+        }
+        if(data.tuoi){
+          dataUser['tuoi'] = data.tuoi;
+          delete data.tuoi;
+        }
+
+        Object.keys(data).map(function(key) {
+          dataUser['content'] = `${dataUser.content ? dataUser.content + ", " : ""  }${key}: ${data[key]}`
+        })
+      }
+
+      const editUser = await userController.updateInfo(user, {...dataUser, discord_id: userId})
+      
+      if(editUser){
+        await message.react('💕');
+        if(!user) {
+          const member = message.guild.members.cache.get(userId);
+          if (member) {
+            const role = message.guild.roles.cache.get(setting.role_info);
+  
+            if (role) {
+                try {
+                    await member.roles.add(role);
+                } catch (error) {
+                    console.error("Lỗi khi thêm vai trò:", error);
+                }
+            } else {
+                console.error("Không tìm thấy vai trò!");
+            }
+          }
+        }
+      }
+    }
+  }
 });
 
 // schedule.scheduleJob('06 11 * * *', async () => {
-//   const arrUser = await userController.getAllUser();
-
-//   if(arrUser.length > 0){
-//     arrUser.map( async (item) => {
-//       const API_KEY = process.env.API_KEY_WEATHER; // Thay YOUR_API_KEY bằng khóa API của bạn từ OpenWeatherMap
-//       const dataUser = item;
-//       const content = async () => {
-//         try {
-//           let response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${dataUser?.city || 'Thanh Hóa'}&appid=${API_KEY}&units=metric&lang=vi`);
-//           response = response.data;
-    
-//           return {
-//             data: response,
-//             weather: [
-//               { name: '- Nhiệt độ hiện tại:', value: `${response?.main?.temp } °C` },
-//               { name: '- Tầm nhìn:', value: `${response?.visibility}` },
-//               { name: '- Tốc độ gió:', value: `${response?.wind?.speed}` },
-//               { name: '- Mây che phủ:', value: `${response?.clouds?.all >= 70 ? "Nhiều mây" : response?.clouds?.all >= 30 ? "Bình thường" : "Ít mây"}` },
-//             ]
-//           }
-    
-//         } catch (error) {
-//           console.error('Lỗi khi tải dữ liệu thời tiết:', error);
-//           return {
-//             data: null,
-//             weather: [
-//               {
-//                 name: 'Lỗi Lỗi ....! ', value: `Tib-chan không thể lấy được thời tiết hôm của ${dataUser ? dataUser.call_me + '! ' : 'bạn'} :((`
-//               }
-//             ]
-//           }
-//         }
-//       };
-    
-//       const channel = client.channels.cache.get(process.env.CHANNEL_ID);
-    
-//       if (channel) {
-//           const dataBody = await content();
-    
-//           const exampleEmbed = {
-//             color: 0x0099ff,
-//             title: `Hôm nay tại ${dataUser?.city} trời ${dataBody?.data?.weather[0]?.description}, ${dataUser?.call_me || 'bạn'} ${WEATHER[dataBody?.data?.weather[0]?.main]?.label || ''}`,
-//             fields: dataBody.weather,
-//             timestamp: new Date().toISOString(),
-//           };
-//           const tagMessage = dataUser.id ?`<@${dataUser.id}>` : '';
-//           channel.send({ embeds: [exampleEmbed] });
-//       } else {
-//           console.log("Kênh không tồn tại hoặc Tib-chan không có quyền truy cập vào kênh.");
-//       }
-//     })
-//   }
 // });
 
 client.login(token);
