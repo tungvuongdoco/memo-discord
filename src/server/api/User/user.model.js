@@ -15,6 +15,7 @@ const schema = new Schema(
     city: { type: String }, // Địa chỉ
     game: { type: String }, // Tên game
     character: { type: String }, // Tính cách
+    so_thich: { type: String }, // Sở thích
     content: { type: String }, // Thông tin chung
 
     is_deleted: { type: Boolean, default: false },

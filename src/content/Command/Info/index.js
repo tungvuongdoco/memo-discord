@@ -44,6 +44,9 @@ export default async function Info(message, args) {
       if(key === 'tuoi'){
         customKey = "Tuổi"
       }
+      if(key === 'so_thich'){
+        customKey = "Sở thích"
+      }
 
       if(customKey && dataUser[key]){
         fields.push({ name: `- ${customKey}:`, value: `${dataUser[key]}`,})

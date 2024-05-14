@@ -6,6 +6,8 @@ import Music from '../Command/Music';
 import CallMe from '../Command/CallMe/CallMe';
 import City from '../Command/City';
 import Love from '../Command/Love';
+import Chat from '../Command/Chat/index';
+import ChatRule from '../Command/ChatRule/index';
 import Bye from '../Command/Bye/index';
 import Welecom from '../Command/Welecom/index';
 import ChanelInfo from '../Command/ChanelInfo/index';
@@ -93,6 +95,12 @@ async function ListCommand(message, prefix, client) {
     case "info":
       Info(message, args);
       break; 
+    case "chat":
+      Chat(message, args, client);
+      break;
+    case "chatrule":
+      ChatRule(message, args, client);
+      break;
   }
 }
 

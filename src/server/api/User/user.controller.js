@@ -9,7 +9,32 @@ export async function getUserQuery(discord_id) {
 
     const data = await Model.findOne(query).lean();
 
-    return data
+    let orderedData = null;
+
+    if(data){
+      orderedData = {
+        id: data._id,
+        _id: data._id,
+        full_name: data.full_name,
+        gioi_tinh: data.gioi_tinh,
+        tuoi: data.tuoi,
+        date_of_birth: data.date_of_birth,
+        city: data.city,
+        game: data.game,
+        character: data.character,
+        so_thich: data.so_thich,
+        content: data.content,
+        call_me: data.call_me,
+        id_city: data.id_city,
+        discord_id: data.discord_id,
+        love: data.love,
+        is_deleted: data.is_deleted,
+        role_admin: data.role_admin,
+        created_at: data.created_at,
+      };
+    }
+
+    return orderedData
   } catch (err) {
     console.log("Tib-chan bị lỗi khi lấy dữ liệu", err);
     return null;
@@ -41,7 +66,7 @@ export async function update(user, data) {
     } else {
       createdUser = await Model.findByIdAndUpdate(user._id, data, { new: true });
     }
-    console.log(data, "data");
+
     if(createdUser){
       if(data.call_me){
         message = `Từ giờ Tib-chan sẽ gọi bạn là ${data?.call_me} :))`
@@ -89,7 +114,7 @@ export async function deleteUse(discord_id) {
     const user = await Model.findOne({discord_id: discord_id}).lean();
 
     if(user){
-      await Model.deleteOne({id: user.id});
+      await Model.deleteOne({_id: user._id});
     }
     return "";
 	} catch (err) {

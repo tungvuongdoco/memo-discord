@@ -134,6 +134,9 @@ client.on('message', async(message) => {
         if(key === 'Tuổi' || key === 'tuổi' || key === 'tuoi'){
           customKey = 'tuoi';
         }
+        if(key === 'Sở thích' || key === 'Sở Thích' || key === 'sở thích' || key === 'so thich'){
+          customKey = 'so_thich';
+        }
         data[customKey] = value;
       });
 
@@ -170,6 +173,10 @@ client.on('message', async(message) => {
           dataUser['tuoi'] = data.tuoi;
           delete data.tuoi;
         }
+        if(data.so_thich){
+          dataUser['so_thich'] = data.so_thich;
+          delete data.so_thich;
+        }
 
         Object.keys(data).map(function(key) {
           dataUser['content'] = `${dataUser.content ? dataUser.content + ", " : ""  }${key}: ${data[key]}`
@@ -177,7 +184,7 @@ client.on('message', async(message) => {
       }
 
       const editUser = await userController.updateInfo(user, {...dataUser, discord_id: userId})
-      
+
       if(editUser){
         await message.react('💕');
         if(!user) {
